@@ -1,6 +1,6 @@
 # COATL-AIRCRAFT Week 1 Progress Report
-Week 1 Dates: 01/01/2024 - 01/07/2024
-Report date: 01/07/2024
+Week 1 Dates: 01/05/2024 - 01/11/2024
+Report Date: 01/07/2024
 
 
 - ## Last Week (Times in Hours)
@@ -39,42 +39,48 @@ Report date: 01/07/2024
 
 
 # COATL-AIRCRAFT Week 2 Progress Report
-Week 2 Dates: 01/08/2024 - 01/14/2024
-Report date: 01/15/2024
+Week 2 Dates: 01/12/2024 - 01/18/2024
+Report Date: 01/16/2024
 
 
 - ## Last Week (Times in Hours)
     - Team Review
-        - 
+        - Read the supplemental material provided by our sponsor Josh
+        - Discussed in detail what our circuitry will look like
+        - Created a block diagram of the instrument
     - Team Member 1 - Felix Moss
-        - 
+        - Reading/Researching (6)
     - Team Member 2 - Eisa Alsharifi
-        - 
+        - Reading/Researching (6)
     - Team Member 3 - Nathan Truong
-        - 
+        - Reading/Researching (6)
     - Team Member 4 - Annika Boyd
-        - 
+        - Reading/Researching (6)
 - ## Next Week
     - Team Plan
-        - 
+        - Design initial circuit schematic
+        - Look for parts and begin BOM creation
+        - Consolidate all project notes to Git and organize
+        - Git README
     - Team Member 1 - Felix Moss
-        -
-    - Team Member 2 - Eisa Eisa Alsharifi
-        -
+        - Git README (2)
+        - Git Project notes and Organization(2)
+    - Team Member 2 - Eisa Alsharifi
+        - Schematic (5)
     - Team Member 3 - Nathan Truong
-        -
-    - Team Member 4 - Annika
-        -
+        - Schematic (5)
+    - Team Member 4 - Annika Boyd
+        - Part Search and BOM Creation (5)
 -  ## Blocked
     - Team Blocks
-        -
+        - N/A
     - Team Member 1 - Felix Moss
-        -
+        - Don't know how to machine so I can't start that
     - Team Member 2 - Eisa Alsharifi
-        -
+        - N/A
     - Team Member 3 - Nathan Truong
-        -
+        - Don't know if 3D printing can be utilized yet
     - Team Member 4 - Annika
-        -
+        - N/A
 
 
