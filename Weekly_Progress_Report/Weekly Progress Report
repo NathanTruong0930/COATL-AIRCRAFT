@@ -84,3 +84,67 @@ Report Date: 01/16/2024
         - N/A
 
 
+# COATL-AIRCRAFT Week 2 Progress Report
+Week 2 Dates: 01/19/2024 - 01/25/2024
+Report Date: 01/24/2024
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - Completed rough draft of project proposal and sent to Josh for review
+        - Completed Gantt Chart
+        - Designed rough draft of circuit schematic
+        - Wrote BOM based on circuit schematic and sponsor feedback
+        - Discussed physical designs and potential times to begin machining 
+    - Team Member 1 - Felix Moss
+        - Gantt Chart (2)
+        - Project Proposal (4)
+        - Organized Git (3)
+    - Team Member 2 - Eisa Alsharifi
+        - Circuit Design (4)
+        - Project Proposal (4)
+    - Team Member 3 - Nathan Truong
+        - Project Proposal (4)
+    - Team Member 4 - Annika Boyd
+        - BOM Creation (4)
+        - Project Proposal (4)
+        - Project Proposal (4)
+- ## Next Week
+    - Team Plan
+        - Finalize circuit design to meet sponsor feedback
+        - Finalize project proposal and obtain signature from sponsor
+        - Update BOM to reflect updated circuit design
+        - Research physical designs, talk with Josh about machining
+        - Add all other notes taken to Git
+        - Finalize block diagrams
+    - Team Member 1 - Felix Moss
+        - Research physical design (4)
+        - Machining appointment (2)
+        - Add notes to Git (2)
+        - Proposal finalization (2)
+    - Team Member 2 - Eisa Alsharifi
+        - Update circuit design (6)
+        - Proposal finalization (2)
+    - Team Member 3 - Nathan Truong
+        - Research physical design (4)
+        - Machining appointment (2)
+        - Proposal finalization (2)
+        - Finalize block diagrams (2)
+    - Team Member 4 - Annika Boyd
+        - Circuit design (4)
+        - BOM Updates (3)
+        - Proposal finalization (2)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on budget confirmation and the exact use of the EDA for the project proposal
+        - Waiting for next meeting to setup machine shop appointment
+        - Project proposal pending sponsor approval
+    - Team Member 1 - Felix Moss
+        - Don't know how to machine so I can't start that
+    - Team Member 2 - Eisa Alsharifi
+        - New circuit updates pending sponsor approval
+    - Team Member 3 - Nathan Truong
+        - Don't know if 3D printing can be utilized yet
+    - Team Member 4 - Annika
+        - BOM updates pending circuit updates
+
