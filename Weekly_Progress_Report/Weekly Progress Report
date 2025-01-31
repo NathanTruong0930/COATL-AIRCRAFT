@@ -84,7 +84,7 @@ Report Date: 01/16/2024
         - N/A
 
 
-# COATL-AIRCRAFT Week 2 Progress Report
+# COATL-AIRCRAFT Week 3 Progress Report
 Week 2 Dates: 01/19/2024 - 01/25/2024
 Report Date: 01/24/2024
 
@@ -148,3 +148,54 @@ Report Date: 01/24/2024
     - Team Member 4 - Annika
         - BOM updates pending circuit updates
 
+
+# COATL-AIRCRAFT Week 4 Progress Report
+Week 2 Dates: 01/26/2024 - 02/01/2024
+Report Date: 01/31/2024
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - Finalized project proposal 
+        - Researched options for voltage regulation, negative voltage considerations, and op-amp configurations
+        - Discussed with sponsor the methods of procuring parts and managing our budget
+    - Team Member 1 - Felix Moss
+        - Git updates (1)
+        - Proposal finalization (2)
+    - Team Member 2 - Eisa Alsharifi
+        - Circuit design research (5)
+        - Proposal finalization (2)
+    - Team Member 3 - Nathan Truong
+        - Proposal finalization (2)
+        - Finalize block diagrams (2)
+        - Proposal finalization (2)
+    - Team Member 4 - Annika Boyd
+        - Circuit design research (5)
+        - Official BOM and part procurement research (2)
+        - Proposal finalization (2)
+- ## Next Week
+    - Team Plan
+        - Finalize circuit design with final values and part numbers
+        - Begin proper part procurement
+        - Establish meeting times for physical design (machining)
+    - Team Member 1 - Felix Moss
+        - Machining meeting planning (1)
+    - Team Member 2 - Eisa Alsharifi
+        - Finalize circuit design (5)
+    - Team Member 3 - Nathan Truong
+        - Machining meeting planning (1)
+    - Team Member 4 - Annika Boyd
+        - Finalize circuit design (5)
+        - Write up official parts procurement document (2)
+-  ## Blocked
+    - Team Blocks
+        - Project proposal pending approval
+    - Team Member 1 - Felix Moss
+        - Was sick most of week 4 so could not attend sponsor meeting :(
+        - Waiting to set physical design appt.
+    - Team Member 2 - Eisa Alsharifi
+        - Waiting on advisor confirmation for circuit design
+    - Team Member 3 - Nathan Truong
+        - Waiting to set physical design appt.
+    - Team Member 4 - Annika
+        - Waiting on advisor confirmation for circuit parts
