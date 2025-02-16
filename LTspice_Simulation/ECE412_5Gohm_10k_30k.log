@@ -1,0 +1,22 @@
+Circuit: * C:\Users\annik\OneDrive\Documents\ECE41_413\Test1\ECE412_5Gohm_10k_30k.asc
+
+Per .tran options, skipping operating point for transient analysis.
+
+Date: Wed Feb 12 11:43:21 2025
+Total elapsed time: 0.212 seconds.
+
+tnom = 27
+temp = 27
+method = modified trap
+totiter = 3032
+traniter = 3032
+tranpoints = 1501
+accept = 1477
+rejected = 24
+matrix size = 9
+fillins = 0
+solver = Normal
+Avg thread counts: 2.9/4.9/4.9/2.9
+Matrix Compiler1: 440 bytes object code size  0.3/0.3/[0.3]
+Matrix Compiler2: 827 bytes object code size  0.3/0.6/[0.2]
+
