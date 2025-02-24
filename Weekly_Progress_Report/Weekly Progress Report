@@ -85,7 +85,7 @@ Report Date: 01/16/2024
 
 
 # COATL-AIRCRAFT Week 3 Progress Report
-Week 2 Dates: 01/19/2024 - 01/25/2024
+Week 3 Dates: 01/19/2024 - 01/25/2024
 Report Date: 01/24/2024
 
 
@@ -151,7 +151,7 @@ Report Date: 01/24/2024
 
 
 # COATL-AIRCRAFT Week 4 Progress Report
-Week 2 Dates: 01/26/2024 - 02/01/2024
+Week 4 Dates: 01/26/2024 - 02/01/2024
 Report Date: 01/31/2024
 
 
@@ -205,7 +205,7 @@ Report Date: 01/31/2024
 
 
 # COATL-AIRCRAFT Week 5 Progress Report
-Week 2 Dates: 02/02/2024 - 02/09/2024
+Week 5 Dates: 02/02/2024 - 02/09/2024
 Report Date: 02/09/2024
 
 
@@ -257,7 +257,7 @@ Report Date: 02/09/2024
 
 
 # COATL-AIRCRAFT Week 6 Progress Report
-Week 2 Dates: 02/10/2024 - 02/16/2024
+Week 6 Dates: 02/10/2024 - 02/16/2024
 Report Date: 02/18/2024
 
 
@@ -275,7 +275,7 @@ Report Date: 02/18/2024
     - Team Member 3 - Nathan Truong
         - PCB Design (5)
     - Team Member 4 - Annika Boyd
-        - LTSpice completed (5)
+        - PCB Design (5)
 - ## Next Week
     - Team Plan
         - Layout breadboard
@@ -293,6 +293,54 @@ Report Date: 02/18/2024
     - Team Member 4 - Annika Boyd
         - Breadboard prototyping (6)
         - PCB testing (4)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on PCB printing to do testing
+    - Team Member 1 - Felix Moss
+        - Waiting for PCB measurements to start box design
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika
+        - N/A
+
+
+# COATL-AIRCRAFT Week 7 Progress Report
+Week 7 Dates: 02/17/2024 - 02/23/2024
+Report Date: 02/23/2024
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - Breadboard testing was done for version 1.0 of the circuit
+        - KiCAD PCB was created and reviewed by the group and Josh
+        - Digital switch design was decided upon and new parts were ordered
+    - Team Member 1 - Felix Moss
+        - Git updates (1)
+        - Breadboard testing documentation (3)
+    - Team Member 2 - Eisa Alsharifi
+        - Breadboard testing (3)
+        - Parts ordering (1)
+        - PCB Design (2)
+    - Team Member 3 - Nathan Truong
+        - Breadboard testing (3)
+    - Team Member 4 - Annika Boyd
+        - PCB Design (5)
+- ## Next Week
+    - Team Plan
+        - Review new PCB design with Josh and group
+        - Print PCB at EPL
+        - Create basic 3D design of faraday cup and pcb box
+        - Test PCB possibly
+    - Team Member 1 - Felix Moss
+        - PCB box design (6)
+    - Team Member 2 - Eisa Alsharifi
+        - PCB printing (2)
+    - Team Member 3 - Nathan Truong
+        - Faraday Cup design (6)
+    - Team Member 4 - Annika Boyd
+        - PCB printing (2)
 -  ## Blocked
     - Team Blocks
         - Waiting on PCB printing to do testing
