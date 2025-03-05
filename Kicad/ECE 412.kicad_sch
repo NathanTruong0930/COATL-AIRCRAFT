@@ -7874,7 +7874,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ADG412:TSSOP16"
+		(property "Footprint" "ADG412:SOIC16N"
 			(at 160.02 110.49 0)
 			(effects
 				(font
@@ -8608,7 +8608,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ADG412:TSSOP16"
+		(property "Footprint" "ADG412:SOIC16N"
 			(at 160.02 85.09 0)
 			(effects
 				(font
@@ -9415,7 +9415,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ADG412:TSSOP16"
+		(property "Footprint" "ADG412:SOIC16N"
 			(at 160.02 97.79 0)
 			(effects
 				(font
@@ -10513,7 +10513,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ADG412:TSSOP16"
+		(property "Footprint" "ADG412:SOIC16N"
 			(at 160.02 123.19 0)
 			(effects
 				(font
@@ -10723,7 +10723,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ADG412:TSSOP16"
+		(property "Footprint" "ADG412:SOIC16N"
 			(at 161.29 69.85 0)
 			(effects
 				(font
