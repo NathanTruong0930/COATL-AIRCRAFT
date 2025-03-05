@@ -352,3 +352,47 @@ Report Date: 02/23/2024
         - N/A
     - Team Member 4 - Annika
         - N/A
+
+
+# COATL-AIRCRAFT Week 8 Progress Report
+Week 8 Dates: 02/24/2024 - 03/02/2024
+Report Date: 03/05/2024
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - PCB for the MAX1032 has been planned out
+        - Preliminary 3D layout for circuit box has been created
+        - The main PCB with the analog and digital changes has been created
+    - Team Member 1 - Felix Moss
+        - Preliminary PCB 3D Print Box (5)
+    - Team Member 2 - Eisa Alsharifi
+        - PCB Design (5)
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - PCB Design (5)
+- ## Next Week
+    - Team Plan
+        - Review new PCB design with Josh and group
+        - Print MAX 1032PCB at EPL
+    - Team Member 1 - Felix Moss
+        - Git Updates (1)
+    - Team Member 2 - Eisa Alsharifi
+        - PCB printing and Design(2)
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - PCB Design (5)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on PCB printing to do testing
+        - Waiting on PCB measurements
+    - Team Member 1 - Felix Moss
+        - Waiting for PCB measurements to start box design
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika
+        - N/A
