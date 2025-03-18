@@ -20,6 +20,7 @@ This repository contains code and resources for the **Electrostatic Dust Analyze
 
 - **412_Practicum:** Assignments and other in class documents
 - **Bill_of_Materials:** List of components used in the project
+- **Fusion_Files:** PCB box fusion files
 - **Gantt_Chart:** Project Gantt chart
 - **Kicad:** All project KiCAD files
 - **LTSpice_Simulation:** All LTSpice files
