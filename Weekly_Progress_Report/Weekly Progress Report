@@ -402,7 +402,7 @@ Report Date: 03/05/2025
 
 
 # COATL-AIRCRAFT Week 9 Progress Report
-Week 8 Dates: 03/03/2025 - 03/09/2025
+Week 9 Dates: 03/03/2025 - 03/09/2025
 Report Date: 03/12/2025
 
 
@@ -455,25 +455,54 @@ Report Date: 03/12/2025
 
 
 # COATL-AIRCRAFT Week 10 Progress Report
-Week 8 Dates: 03/10/2025 - 03/16/2025
-Report Date: 03//2025
+Week 10 Dates: 03/10/2025 - 03/16/2025
+Report Date: 03/17/2025
 
 
 - ## Last Week (Times in Hours)
     - Team Review
+        - Main PCB was soldered together, but some parts need to be changed slightly to accomodate a larger SMD size (1206)
+        - Some capacitor values were updated on the PCB to 10uF
+        - The MAX1032 testing PCB was burnt with a heat gun by accident, so a new one is needed
+        - Unable to start testing due to burnt PCB and capacitor changes
+        - A new ESP32 was acquired for eventual testing
+        - Plans for OLED screen use have been discussed
+        - Meeting times for next term have been established (12PM on Mondays)
+        - MAX1032 programming was done by Eisa
     - Team Member 1 - Felix Moss
+        - Github updates (2)
     - Team Member 2 - Eisa Alsharifi
+        - MAX1032 PCB work (4)
+        - MAX1032 programming (6)
     - Team Member 3 - Nathan Truong
+        - PCB soldering (8)
     - Team Member 4 - Annika Boyd
+        - PCB updates (5)
 - ## Next Week
     - Team Plan
+        - Get the new capacitors for the main PCB
+        - Reprint and solder the MAX1032 PCB
+        - Team CATME surveys and weekly progress reports
+        - Begin tests 
     - Team Member 1 - Felix Moss
+        - Document testing (4)
+        - Githug updates (1)
     - Team Member 2 - Eisa Alsharifi
+        - Solder/test MAX1032 PCB (4)
+        - Test main PCB (4)
     - Team Member 3 - Nathan Truong
+        - Solder/test main PCB (8)
     - Team Member 4 - Annika Boyd
+        - Assist in testing PCBs (4)
 -  ## Blocked
     - Team Blocks
+        - Waiting on new capacitors to begin testing
+        - Upcoming finals may impede testing progress next week
     - Team Member 1 - Felix Moss
+        - N/A
     - Team Member 2 - Eisa Alsharifi
+        - N/A
     - Team Member 3 - Nathan Truong
+        - N/A
     - Team Member 4 - Annika Boyd
+        - N/A
