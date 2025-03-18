@@ -28,7 +28,6 @@ This repository contains code and resources for the **Electrostatic Dust Analyze
 - **Team_Meeting_Notes:** Notes from team meetings and discussions
 - **Testing_Documentation:** Documentation of tests run by the team
 - **Weekly_Progress_Report:** Weekly log of progress by the team
-- 
 
 ---
 
