@@ -336,11 +336,11 @@ Report Date: 02/23/2025
     - Team Member 1 - Felix Moss
         - PCB box design (6)
     - Team Member 2 - Eisa Alsharifi
-        - PCB printing (2)
+        - PCB Design (2)
     - Team Member 3 - Nathan Truong
         - Faraday Cup design (6)
     - Team Member 4 - Annika Boyd
-        - PCB printing (2)
+        - PCB Design (2)
 -  ## Blocked
     - Team Blocks
         - Waiting on PCB printing to do testing
@@ -371,7 +371,7 @@ Report Date: 03/05/2025
     - Team Member 3 - Nathan Truong
         - N/A
     - Team Member 4 - Annika Boyd
-        - PCB Design (5)
+        - PCB ReDesign (5)
 - ## Next Week
     - Team Plan
         - Review new PCB design with Josh and group
@@ -440,7 +440,7 @@ Report Date: 03/12/2025
         - Solder Parts (3)
         - Test MAX1032 and Full PCB (5)
     - Team Member 4 - Annika Boyd
-        - Test MAX1032 and Full PCB (5)
+        - PCB Redesign to accomodate switch to larger SMD capacitors (4)
 -  ## Blocked
     - Team Blocks
         - Waiting for testing day to test MAX1032 and full PCB
@@ -493,7 +493,8 @@ Report Date: 03/17/2025
     - Team Member 3 - Nathan Truong
         - Solder/test main PCB (8)
     - Team Member 4 - Annika Boyd
-        - Assist in testing PCBs (4)
+        - PCB Redesign to accomodate switch to larger SMD capacitors (4)
+        - Update BOM to new changes (3)
 -  ## Blocked
     - Team Blocks
         - Waiting on new capacitors to begin testing
