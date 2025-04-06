@@ -1,0 +1,61 @@
+# COATL-AIRCRAFT Week 1 Progress Report
+Week 1 Dates: 03/31/2025 - 04/06/2025
+Report Date: 04/06/2025
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - For our first week, we reconvened and talked about the progress of the PCB
+        - Getting code to work on the PCB has been a challenge. The ESP32 on our PCB has not been responding as predicted and we cannot get proper measurements from our PCB circuit
+        - We are also working on getting our MAX1032 to respond to our code. Progress has been very uneven
+        - An electrode mesh for the tube dust sensor has been selected and we are waiting to talk to Josh about it's viability as an electrode mesh
+    - Team Member 1 - Felix Moss
+        - Github Updates (2)
+        - Mesh research (1)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - ADC coding/debugging (3)
+        - ESP32 learning (2)
+        - BOM (2)
+        - Meeting (4)
+    - Team Member 3 - Nathan Truong
+        - Soldering, continuity testing (3)
+        - Debugging, result testing (4) 
+        - Meeting (4)
+    - Team Member 4 - Annika Boyd
+        - PCB re-arranging (8)
+        - Meeting (4)
+- ## Next Week
+    - Team Plan
+        - Ask Josh about physical construction of tube sensor, ordering the next PCB through Oshpark, and acquiring more ESP32s
+        - Continue debugging PCB
+        - Create 3D print of tube for dust sensor
+    - Team Member 1 - Felix Moss
+        - Github updates (2)
+        - 3D Print tube (5)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - ADC Work (5)
+        - Main code (5)
+        - Meeting (4) 
+    - Team Member 3 - Nathan Truong
+        - PCB testing (5)
+        - Meeting (4)
+    - Team Member 4 - Annika
+        - PCB design (5)
+        - Code help (5)
+        - BOM updates (2)
+        - Meeting (4)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on OK's from josh about mesh, PCB updates, and PCB orders
+    - Team Member 1 - Felix Moss
+        - N/A
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - N/A
+
+
