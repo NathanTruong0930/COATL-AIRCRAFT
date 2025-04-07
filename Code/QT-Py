@@ -1,0 +1,46 @@
+#include <SPI.h>
+
+// Define the CS pin
+const int CS_PIN = 9; // Using GPIO9 for Chip Select (CS)
+
+void setup() {
+  Serial.begin(115200); // Start serial communication at 115200 bps
+  pinMode(CS_PIN, OUTPUT); // Set the chip select pin as an output
+
+  // Initialize SPI
+  SPI.begin(); // Set up SPI bus
+  SPI.beginTransaction(SPISettings(5000000, MSBFIRST, SPI_MODE0)); // 5 MHz, MSB first, Mode 0
+  digitalWrite(CS_PIN, HIGH); // Ensure CS is high to start
+
+  configureADC(); // Configure the ADC for 3xV_REF on channel 0
+}
+
+void loop() {
+  int adcValue = readADC(0); // Read ADC value from channel 0
+  Serial.print("ADC Value on Channel 0: ");
+  Serial.println(adcValue);
+
+  delay(1000); // Delay for 1 second before reading again
+}
+
+void configureADC() {
+  digitalWrite(CS_PIN, LOW); // Activate the CS line
+  // Send the configuration command to set up the ADC
+  // Start bit (1), Single-ended (0), Channel 0 (000), 3xV_REF range (110)
+  SPI.transfer(0b10000110);
+  digitalWrite(CS_PIN, HIGH); // Deactivate the CS line
+}
+
+int readADC(byte channel) {
+  digitalWrite(CS_PIN, LOW); // Activate the CS line
+  // Send the command to read from the specified channel
+  // Start bit (1), Single-ended (0), Channel number
+  byte commandByte = 0b10000000 | (channel << 4); // Configuration for reading channel
+  SPI.transfer(commandByte); // Send the command byte
+  byte msb = SPI.transfer(0x00); // Read MSB
+  byte lsb = SPI.transfer(0x00); // Read LSB
+  digitalWrite(CS_PIN, HIGH); // Deactivate the CS line
+
+  int result = ((msb & 0x0F) << 8) | lsb; // Combine MSB and LSB
+  return result;
+}
