@@ -9,7 +9,7 @@
 	(paper "A4")
 	(title_block
 		(title "Team 3 - COATL Aircraft PCB")
-		(date "2025-04-06")
+		(date "2025-04-07")
 		(rev "C")
 		(company "Annika Boyd, Eisa Alsharifi, Felix Moss, Nathan Truong")
 	)
@@ -10870,22 +10870,13 @@
 		(uuid "a4e77c32-c40f-41a9-9424-b5926d37ff38")
 	)
 	(via
-		(at 94 89)
+		(at 94.01 84.695)
 		(size 0.6)
 		(drill 0.3)
 		(layers "F.Cu" "B.Cu")
 		(free yes)
 		(net 1)
 		(uuid "a8061f96-9c2b-4f95-9a12-605c2fa3af23")
-	)
-	(via
-		(at 94.635 84.895)
-		(size 0.6)
-		(drill 0.3)
-		(layers "F.Cu" "B.Cu")
-		(free yes)
-		(net 1)
-		(uuid "b9589bb7-439a-400b-aed2-3b4c62ddf729")
 	)
 	(via
 		(at 120.56 90.72)
