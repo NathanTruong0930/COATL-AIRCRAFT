@@ -1,46 +1,68 @@
 #include <SPI.h>
 
-// Define the CS pin
-const int CS_PIN = 9; // Using GPIO9 for Chip Select (CS)
+// Pins definition
+#define CS_PIN        9
+#define SPI_SCK       36
+#define SPI_MOSI      35
+#define SPI_MISO      37
+
+// ADC parameters
+#define V_REF          4.096
+#define ADC_RANGE_BYTE 0b10000110  // Single-ended, 3×V_REF (12.288 V max)
+#define MODE_CONTROL_BYTE 0b10000000 // Single-ended, CH0
 
 void setup() {
-  Serial.begin(115200); // Start serial communication at 115200 bps
-  pinMode(CS_PIN, OUTPUT); // Set the chip select pin as an output
+  Serial.begin(115200);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
+  SPI.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
+  
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
 
-  // Initialize SPI
-  SPI.begin(); // Set up SPI bus
-  SPI.beginTransaction(SPISettings(5000000, MSBFIRST, SPI_MODE0)); // 5 MHz, MSB first, Mode 0
-  digitalWrite(CS_PIN, HIGH); // Ensure CS is high to start
-
-  configureADC(); // Configure the ADC for 3xV_REF on channel 0
+  // Initial Configuration
+  configureADC();
+  Serial.println("MAX1032 ADC setup complete.");
 }
 
 void loop() {
-  int adcValue = readADC(0); // Read ADC value from channel 0
-  Serial.print("ADC Value on Channel 0: ");
-  Serial.println(adcValue);
+  uint16_t adcRaw = readMAX1032();
+  float measuredVoltage = (adcRaw / 16383.0) * (3 * V_REF);
 
-  delay(1000); // Delay for 1 second before reading again
+  Serial.print("ADC Raw: "); Serial.print(adcRaw);
+  Serial.print(" | Voltage: "); Serial.print(measuredVoltage, 4); Serial.println(" V");
+  
+  delay(1000);
 }
 
+// Proper ADC configuration following advisor's instructions
 void configureADC() {
-  digitalWrite(CS_PIN, LOW); // Activate the CS line
-  // Send the configuration command to set up the ADC
-  // Start bit (1), Single-ended (0), Channel 0 (000), 3xV_REF range (110)
-  SPI.transfer(0b10000110);
-  digitalWrite(CS_PIN, HIGH); // Deactivate the CS line
+  // Set Mode Control Byte
+  digitalWrite(CS_PIN, LOW);
+  SPI.transfer(MODE_CONTROL_BYTE);
+  digitalWrite(CS_PIN, HIGH);
+  delayMicroseconds(10);
+
+  // Set Analog Input Config Byte
+  digitalWrite(CS_PIN, LOW);
+  SPI.transfer(ADC_RANGE_BYTE);
+  digitalWrite(CS_PIN, HIGH);
+  delayMicroseconds(10);
 }
 
-int readADC(byte channel) {
-  digitalWrite(CS_PIN, LOW); // Activate the CS line
-  // Send the command to read from the specified channel
-  // Start bit (1), Single-ended (0), Channel number
-  byte commandByte = 0b10000000 | (channel << 4); // Configuration for reading channel
-  SPI.transfer(commandByte); // Send the command byte
-  byte msb = SPI.transfer(0x00); // Read MSB
-  byte lsb = SPI.transfer(0x00); // Read LSB
-  digitalWrite(CS_PIN, HIGH); // Deactivate the CS line
+// Corrected read function per advisor notes
+uint16_t readMAX1032() {
+  uint8_t response[4] = {0};
 
-  int result = ((msb & 0x0F) << 8) | lsb; // Combine MSB and LSB
+  digitalWrite(CS_PIN, LOW);
+  SPI.transfer(MODE_CONTROL_BYTE);   // Conversion start byte for CH0
+  response[0] = SPI.transfer(0x00);  // dummy clocks, data ignored
+  response[1] = SPI.transfer(0x00);  // dummy clocks, data ignored
+  response[2] = SPI.transfer(0x00);  // MSB received here
+  response[3] = SPI.transfer(0x00);  // LSB received here
+  digitalWrite(CS_PIN, HIGH);
+
+  // Combine last two bytes into 14-bit ADC value
+  uint16_t result = (((response[2] << 8) | response[3]) >> 2) & 0x3FFF;
+
   return result;
 }
