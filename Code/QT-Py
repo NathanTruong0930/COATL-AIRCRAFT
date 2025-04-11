@@ -46,23 +46,23 @@ void configureADC() {
   digitalWrite(CS_PIN, LOW);
   SPI.transfer(ADC_RANGE_BYTE);
   digitalWrite(CS_PIN, HIGH);
-  delayMicroseconds(10);
+  delayMicroseconds(100);
 }
 
 // Corrected read function per advisor notes
 uint16_t readMAX1032() {
-  uint8_t response[4] = {0};
+  uint8_t response[2] = {0};
 
   digitalWrite(CS_PIN, LOW);
   SPI.transfer(MODE_CONTROL_BYTE);   // Conversion start byte for CH0
   response[0] = SPI.transfer(0x00);  // dummy clocks, data ignored
   response[1] = SPI.transfer(0x00);  // dummy clocks, data ignored
   response[2] = SPI.transfer(0x00);  // MSB received here
-  response[3] = SPI.transfer(0x00);  // LSB received here
+ // response[3] = SPI.transfer(0x00);  // LSB received here
   digitalWrite(CS_PIN, HIGH);
 
   // Combine last two bytes into 14-bit ADC value
-  uint16_t result = (((response[2] << 8) | response[3]) >> 2) & 0x3FFF;
+  uint16_t result = (((response[1] << 8) | response[2]) >> 2) & 0x3FFF;
 
   return result;
 }
