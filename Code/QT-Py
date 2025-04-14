@@ -1,7 +1,7 @@
 #include <SPI.h>
 
 // Pins definition
-#define CS_PIN        9
+#define CS_PIN        A2
 #define SPI_SCK       36
 #define SPI_MOSI      35
 #define SPI_MISO      37
