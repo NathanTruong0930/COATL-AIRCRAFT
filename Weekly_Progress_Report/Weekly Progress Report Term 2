@@ -59,3 +59,61 @@ Report Date: 04/06/2025
         - N/A
 
 
+# COATL-AIRCRAFT Week 2 Progress Report
+Week 1 Dates: 04/07/2025 - 04/13/2025
+Report Date: 04/16/2025
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - We received more feedback on the PCB from Josh and we have started to redesign many aspects of it
+        - Progress is being made with ADC coding, as well as the soldering it needs for the test board
+        - More updates to PCB box
+    - Team Member 1 - Felix Moss
+        - Github Updates (2)
+        - PCB Box Updates (4)
+    - Team Member 2 - Eisa Alsharifi
+        - ADC coding/debugging (6)
+        - Meeting (4)
+    - Team Member 3 - Nathan Truong
+        - Main PCB testing (2)
+        - Playing around with LTspice (1)
+        - New ADC printing and soldering (3)
+        - Meeting (4)
+    - Team Member 4 - Annika Boyd
+        - PCB redesign (8)
+        - Meeting (4)
+- ## Next Week
+    - Team Plan
+        - Show box to Josh, hopefully get started on machine work
+        - Work on ESP32 code
+        - Order new PCB after Josh review
+        - Test ADC
+    - Team Member 1 - Felix Moss
+        - Github updates (2)
+        - Machine box and tube (5)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - ADC Work (5)
+        - Main code (5)
+        - Meeting (4) 
+    - Team Member 3 - Nathan Truong
+        - ADC testing (5)
+        - Machinig help (2)
+        - Meeting (4)
+    - Team Member 4 - Annika
+        - PCB finish (5)
+        - Code help (5)
+        - Meeting (4)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on OK's from josh about PCB updates, PCB orders, and box files
+    - Team Member 1 - Felix Moss
+        - N/A
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - N/A
+
