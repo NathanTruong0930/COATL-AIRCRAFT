@@ -1,21 +1,22 @@
 #include <SPI.h>
 
-// ADC pins configuration
-#define CS_PIN        34
-#define SPI_SCK        5
-#define SPI_MOSI      18
-#define SPI_MISO      19
+// ADC SPI pin configuration for ESP32 Feather S3
+#define CS_PIN         16
+#define SPI_SCK        36
+#define SPI_MOSI       35
+#define SPI_MISO       37
 
 // ADG212 gain switch pins
-#define GAIN_X4_PIN    14
-#define GAIN_X15_PIN   32
-#define GAIN_X47_PIN   33
+#define GAIN_X4_PIN    5
+#define GAIN_X15_PIN   6
+#define GAIN_X47_PIN   10
 
 // ADC parameters
-#define V_REF          4.096
-#define INPUT_RANGE    6   // 3 × V_REF (12.288 V max)
+#define V_REF          4.098  // Use same reference voltage as in working code
+#define ADC_RANGE_BYTE 0b10000110
+#define MODE_CONTROL_BYTE 0b10000000
 
-// Voltage thresholds based on direction
+// Voltage thresholds
 #define NEG_X4_MIN_V     5.5
 #define NEG_X15_MIN_V    4.8
 #define NEG_X47_MIN_V    4.5
@@ -39,25 +40,23 @@ void setup() {
   pinMode(GAIN_X15_PIN, OUTPUT);
   pinMode(GAIN_X47_PIN, OUTPUT);
 
-  setGain(4);  // Start with gain x4 as default
+  setGain(4);  // Start with gain x4 by default
+  configureADC();
 
   delay(200);
-  Serial.println("Dynamic Direction-Based Gain Switching Initialized.");
+  Serial.println("ADC + Dynamic Gain Switching Initialized (Feather S3).");
 }
 
 void loop() {
-  uint16_t adcRaw = readMAX1032(0, INPUT_RANGE);
+  uint16_t adcRaw = readMAX1032();
   float measuredVoltage = (adcRaw / 16383.0) * (3 * V_REF);
   float actualVoltage = convertToActualVoltage(measuredVoltage, currentGain);
 
-  // Determine charging direction
   bool isNegativeDirection = (actualVoltage < prevVoltage);
   prevVoltage = actualVoltage;
 
-  // Perform dynamic gain switching based on direction
   directionBasedGainSwitch(actualVoltage, isNegativeDirection);
 
-  // Display reading and gain details
   Serial.print("ADC Raw: "); Serial.print(adcRaw);
   Serial.print(" | Measured Voltage: "); Serial.print(measuredVoltage, 4);
   Serial.print(" V | Actual Voltage: "); Serial.print(actualVoltage, 4);
@@ -67,20 +66,35 @@ void loop() {
   delay(1000);
 }
 
-// Read ADC from MAX1032
-uint16_t readMAX1032(uint8_t channel, uint8_t range) {
+// Match your verified ADC configuration
+void configureADC() {
   digitalWrite(CS_PIN, LOW);
-  delayMicroseconds(2);
-  uint8_t command = 0b10000000 | (channel << 4) | range;
-  SPI.transfer(command);
-  delayMicroseconds(10);
-  uint8_t highByte = SPI.transfer(0x00);
-  uint8_t lowByte = SPI.transfer(0x00);
+  SPI.transfer(MODE_CONTROL_BYTE);  // Send Mode-Control byte
   digitalWrite(CS_PIN, HIGH);
-  return (((highByte << 8) | lowByte) >> 2) & 0x3FFF;
+  delayMicroseconds(10);
+
+  digitalWrite(CS_PIN, LOW);
+  SPI.transfer(ADC_RANGE_BYTE);     // Send Analog-Input Config byte
+  digitalWrite(CS_PIN, HIGH);
+  delayMicroseconds(100);
 }
 
-// Set Gain (ADG212 control pins)
+// Updated read function based on working code
+uint16_t readMAX1032() {
+  uint8_t b1, b2, b3;
+
+  digitalWrite(CS_PIN, LOW);
+  SPI.transfer(MODE_CONTROL_BYTE);   // Start conversion
+  b1 = SPI.transfer(0x00);           // dummy
+  b2 = SPI.transfer(0x00);           // MSB
+  b3 = SPI.transfer(0x00);           // LSB
+  digitalWrite(CS_PIN, HIGH);
+
+  uint16_t result = (((b2 << 8) | b3) >> 2) & 0x3FFF;
+  return result;
+}
+
+// Gain control using ADG212 pins
 void setGain(int gain) {
   currentGain = gain;
   digitalWrite(GAIN_X4_PIN, gain == 4 ? HIGH : LOW);
@@ -92,32 +106,22 @@ void setGain(int gain) {
 // Convert measured ADC voltage to real input voltage based on gain
 float convertToActualVoltage(float measuredVoltage, int gain) {
   switch (gain) {
-    case 4:
-      return measuredVoltage; // scaling factor: 1
-    case 15:
-      return measuredVoltage / 0.2667; // scaling factor ~3.75 (1/0.2667)
-    case 47:
-      return measuredVoltage / 0.0851; // scaling factor ~11.75 (1/0.0851)
-    default:
-      return measuredVoltage;
+    case 4:  return measuredVoltage;
+    case 15: return measuredVoltage / 0.2667;
+    case 47: return measuredVoltage / 0.0851;
+    default: return measuredVoltage;
   }
 }
 
-// Dynamic gain switching based on voltage and direction (with hysteresis)
+// Dynamic gain switching (based on direction & thresholds)
 void directionBasedGainSwitch(float voltage, bool negativeDirection) {
-  if (negativeDirection) { // Decreasing voltage direction
-    if (voltage >= NEG_X4_MIN_V && currentGain != 4)
-      setGain(4);
-    else if (voltage < NEG_X4_MIN_V && voltage >= NEG_X15_MIN_V && currentGain != 15)
-      setGain(15);
-    else if (voltage < NEG_X15_MIN_V && voltage >= NEG_X47_MIN_V && currentGain != 47)
-      setGain(47);
-  } else { // Increasing voltage direction
-    if (voltage <= POS_X4_MAX_V && currentGain != 4)
-      setGain(4);
-    else if (voltage > POS_X4_MAX_V && voltage <= POS_X15_MAX_V && currentGain != 15)
-      setGain(15);
-    else if (voltage > POS_X15_MAX_V && voltage <= POS_X47_MAX_V && currentGain != 47)
-      setGain(47);
+  if (negativeDirection) {
+    if (voltage >= NEG_X4_MIN_V && currentGain != 4) setGain(4);
+    else if (voltage < NEG_X4_MIN_V && voltage >= NEG_X15_MIN_V && currentGain != 15) setGain(15);
+    else if (voltage < NEG_X15_MIN_V && voltage >= NEG_X47_MIN_V && currentGain != 47) setGain(47);
+  } else {
+    if (voltage <= POS_X4_MAX_V && currentGain != 4) setGain(4);
+    else if (voltage > POS_X4_MAX_V && voltage <= POS_X15_MAX_V && currentGain != 15) setGain(15);
+    else if (voltage > POS_X15_MAX_V && voltage <= POS_X47_MAX_V && currentGain != 47) setGain(47);
   }
 }
