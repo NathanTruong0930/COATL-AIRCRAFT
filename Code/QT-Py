@@ -1,13 +1,13 @@
 #include <SPI.h>
 
 // Pins definition
-#define CS_PIN        A2
+#define CS_PIN        9
 #define SPI_SCK       36
 #define SPI_MOSI      35
 #define SPI_MISO      37
 
 // ADC parameters
-#define V_REF          4.096
+#define V_REF          4.098
 #define ADC_RANGE_BYTE 0b10000110  // Single-ended, 3×V_REF (12.288 V max)
 #define MODE_CONTROL_BYTE 0b10000000 // Single-ended, CH0
 
