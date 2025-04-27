@@ -1,6 +1,5 @@
 # COATL-AIRCRAFT Week 1 Progress Report
 Week 1 Dates: 03/31/2025 - 04/06/2025
-Report Date: 04/06/2025
 
 
 - ## Last Week (Times in Hours)
@@ -60,8 +59,7 @@ Report Date: 04/06/2025
 
 
 # COATL-AIRCRAFT Week 2 Progress Report
-Week 1 Dates: 04/07/2025 - 04/13/2025
-Report Date: 04/16/2025
+Week 2 Dates: 04/07/2025 - 04/13/2025
 
 
 - ## Last Week (Times in Hours)
@@ -117,3 +115,120 @@ Report Date: 04/16/2025
     - Team Member 4 - Annika Boyd
         - N/A
 
+
+# COATL-AIRCRAFT Week 3 Progress Report
+Week 3 Dates: 04/14/2025 - 04/20/2025
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - We've been able to get the ADC working properly since it now accepts code
+        - Box has been approved by Josh
+        - More PCB updates, sent to order final revision
+    - Team Member 1 - Felix Moss
+        - Github Updates (2)
+        - PCB Box Updates (2)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - ADC coding/debugging (4)
+        - ADC DMM testing (3)
+        - Purchase order (0.1) 
+        - Meeting (4)
+    - Team Member 3 - Nathan Truong
+        - Main PCB testing (4)
+        - Meeting (4)
+    - Team Member 4 - Annika Boyd
+        - PCB design (6)
+        - Meeting (4)
+- ## Next Week
+    - Team Plan
+        - Machine box
+        - Test full circuit
+        - Get started on data hosting place for circuit output readings
+    - Team Member 1 - Felix Moss
+        - Github updates (2)
+        - Machine box and tube (5)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - Main code (5)
+        - Testing
+        - Meeting (4) 
+    - Team Member 3 - Nathan Truong
+        - Machinig help (4)
+        - Meeting (4)
+    - Team Member 4 - Annika
+        - Code help (5)
+        - Meeting (4)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on OK's from josh about PCB updates, PCB orders, and box files
+    - Team Member 1 - Felix Moss
+        - N/A
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - N/A
+
+
+# COATL-AIRCRAFT Week 4 Progress Report
+Week 3 Dates: 04/21/2025 - 04/27/2025
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - Complete redesign of PCB box, now using tube and box templates from McMaster-Carr
+        - Full test of circuit on breadboard completed, we are now able to detect static electricity at the input and display it at the output
+        - Test plan written
+        - Demo slides started
+    - Team Member 1 - Felix Moss
+        - Github Updates (2)
+        - PCB Box Updates (4)
+        - Test Plan (2)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - Testing the Feather (2)
+        - Testing in the Meeting 1.0 (3)
+        - Meeting (4)
+    - Team Member 3 - Nathan Truong
+        - Machining help (2)
+        - Meeting (4)
+    - Team Member 4 - Annika Boyd
+        - Testing stuff (3)
+        - Website code (1)
+        - Demo slides (1)
+        - Meeting (4)
+- ## Next Week
+    - Team Plan
+        - Machine box
+        - Test full circuit
+        - Continute coding
+        - Give demo with video
+    - Team Member 1 - Felix Moss
+        - Github updates (2)
+        - Machine box and tube (5)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - Main code (5)
+        - Testing (5)
+        - Meeting (4) 
+    - Team Member 3 - Nathan Truong
+        - Machinig help (4)
+        - Testing (5)
+        - Meeting (4)
+    - Team Member 4 - Annika
+        - Code help (5)
+        - Testing (5)
+        - Meeting (4)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on PCB orders and machine shop orders
+    - Team Member 1 - Felix Moss
+        - N/A
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - N/A
