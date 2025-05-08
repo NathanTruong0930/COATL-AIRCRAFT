@@ -1,0 +1,42 @@
+//decide bit ranges for gain switching
+const float V_REF = 4.098;
+const float V_ADC_MAX = 3 * V_REF; // 12.294 V
+const int MAX_ADC = 16383;
+
+uint16_t voltageToBits(float v) {
+  return (uint16_t)((v / V_ADC_MAX) * MAX_ADC + 0.5); // rounded to nearest bit
+}
+
+void printBitsForGainRange(String label, float minV, float maxV) {
+  uint16_t minBits = voltageToBits(minV);
+  uint16_t maxBits = voltageToBits(maxV);
+
+  Serial.print(label);
+  Serial.print(" = ");
+  Serial.print(minBits);
+  Serial.print(" to ");
+  Serial.println(maxBits);
+}
+
+void setup() {
+  Serial.begin(115200);
+  while (!Serial);
+
+  Serial.println("=== ADC Bit Ranges by Gain & Charge ===");
+
+  // GAIN 3.9x
+  printBitsForGainRange("gain_39k_Vout_neg", 0.6, 4.500039);
+  printBitsForGainRange("gain_39k_Vout_pos", 4.499961, 8.4);
+
+  // GAIN 15x
+  printBitsForGainRange("gain_150k_Vout_neg", 3.486, 4.500010);
+  printBitsForGainRange("gain_150k_Vout_pos", 4.499990, 5.514);
+
+  // GAIN 47x
+  printBitsForGainRange("gain_470k_Vout_neg", 4.176383, 4.499997);
+  printBitsForGainRange("gain_470k_Vout_pos", 4.500003, 4.823617);
+}
+
+void loop() {
+  // Nothing here, just runs once
+}
