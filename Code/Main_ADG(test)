@@ -13,7 +13,7 @@
 
 // ADC settings
 #define V_REF             4.098
-#define ADC_RANGE_BYTE    0b10000110
+#define ADC_RANGE_BYTE    0b10000100
 #define MODE_CONTROL_BYTE 0b10000000
 
 // Route tracking
@@ -63,7 +63,7 @@ void loop() {
   // Read ADC every 1 second
   if (now - lastADCRead >= 1000) {
     uint16_t adcRaw = readMAX1032();
-    float voltage = (adcRaw / 16383.0) * (3 * V_REF);
+    float voltage = ((adcRaw / 16383.0) - 0.5) * (3 * V_REF);
 
     Serial.print("ADC Raw: "); Serial.print(adcRaw);
     Serial.print(" | Voltage: "); Serial.print(voltage, 4);
