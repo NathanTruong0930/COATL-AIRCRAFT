@@ -4,8 +4,8 @@
 #include <WebServer.h>
 
 // === WiFi Configuration ===
-const char* ssid = "Etherium";
-const char* password = "ladylink";
+const char* ssid = "EA";
+const char* password = "123456Ee";
 
 // === Web server on port 80 ===
 WebServer server(80);
