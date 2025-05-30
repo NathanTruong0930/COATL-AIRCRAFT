@@ -10,12 +10,12 @@ const char* password = "123456Ee";
 WebServer server(80);
 
 // ADG212 control pins
-#define ROUTE1_PIN 9
-#define ROUTE2_PIN 8
-#define ROUTE3_PIN 7
+#define ROUTE1_PIN 18
+#define ROUTE2_PIN 17
+#define ROUTE3_PIN 9
 
 // MAX1032 SPI configuration
-#define CS_PIN     17
+#define CS_PIN     8
 #define SPI_SCK    36
 #define SPI_MOSI   35
 #define SPI_MISO   37
