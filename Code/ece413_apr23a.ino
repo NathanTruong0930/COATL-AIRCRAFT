@@ -86,7 +86,7 @@ uint16_t readMAX1032() {
 void calculateDerivedValues() {
   adcRaw = testMode ? (uint16_t)((testVoltage / V_ADC_MAX) * MAX_ADC + 0.5) : readMAX1032();
   voltage = (adcRaw / (float)MAX_ADC) * V_ADC_MAX;
-  float deltaV = voltage //- VIRTUAL_GND;
+  float deltaV = voltage /*- VIRTUAL_GND*/;
   detectGain(deltaV);
   charge = deltaV * FEEDBACK_CAP;
   chargeStr = chargeSign + String(abs(charge) * 1e12, 4) + " pC";
@@ -115,7 +115,7 @@ void handleMain() {
   page += "body{margin:0;padding:0;font-family:monospace;background:#A1A6A8;";
   page += "background-image:url('https://github.com/NathanTruong0930/COATL-AIRCRAFT/blob/main/Code/Volcano2.png?raw=true');";
   page += "background-repeat:no-repeat;background-position:center top;background-size:contain;height:auto;min-height:100vh;overflow-y:scroll;}";
-  page += "#dashboard{position:absolute;top:60vh;left:50%;transform:translateX(-50%);background-color:transparent;padding:1vh;text-align:center;width:90vw;max-width:400px;font-size:2vh;}";
+  page += "#dashboard{position:absolute;top:60vh;left:50%;transform:translateX(-50%);background-color:transparent;padding:1vh;text-align:center;width:90vw;max-width:450px;font-size:2vh;}";
   page += "h1{font-size:3vh;margin:0.5vh 0;}p{font-size:2vh;margin:1vh 0;}button{font-family:monospace;background-color:#E87749;color:black;padding:1vh 2vh;border:none;cursor:pointer;font-size:2vh;margin-top:2vh;}";
   page += "</style></head><body>";
   page += "<script>window.onload=function(){document.getElementById('dashboard').scrollIntoView({behavior:'smooth',block:'center'});}</script>";
