@@ -2,50 +2,42 @@
 #include <WiFi.h>
 #include <WebServer.h>
 
-// === WiFi Configuration ===
 const char* ssid = "EA";
 const char* password = "123456Ee";
 
-// === Web server on port 80 ===
 WebServer server(80);
 
-// ADG212 control pins
-#define ROUTE1_PIN 18  // 39kΩ
-#define ROUTE2_PIN 17  // 150kΩ
-#define ROUTE3_PIN 9   // 470kΩ
-
-// MAX1032 SPI configuration
+#define ROUTE1_PIN 18
+#define ROUTE2_PIN 17
+#define ROUTE3_PIN 9
 #define CS_PIN     8
 #define SPI_SCK    36
 #define SPI_MOSI   35
 #define SPI_MISO   37
 
-// ADC settings
 #define V_REF             4.098
 #define ADC_RANGE_BYTE    0b10000100
 #define MODE_CONTROL_BYTE 0b10000000
+#define C_FEEDBACK        1e-10
 
-// ADC switching thresholds
 #define R3_MIN 7738
 #define R3_MAX 8645
-
 #define R2_MIN_1 6770
 #define R2_MAX_1 7737
 #define R2_MIN_2 8646
 #define R2_MAX_2 9613
-
 #define R1_MIN_1 0
 #define R1_MAX_1 6769
 #define R1_MIN_2 9614
 #define R1_MAX_2 16383
 
-// Data tracking
 int currentRoute = 1;
 unsigned long lastADCRead = 0;
 uint16_t adcRaw = 0;
 float voltage = 0.0;
+float charge = 0.0;
+unsigned long startTime = 0;
 
-// === Serial Monitor Web Log ===
 constexpr uint16_t LOG_DEPTH = 120;
 String logBuf[LOG_DEPTH];
 uint16_t logHead = 0;
@@ -64,35 +56,153 @@ void handleLog() {
   server.send(200, "text/plain", out);
 }
 
+void handleData() {
+  unsigned long now = millis() - startTime;
+  String json = "{";
+  json += "\"time\":" + String(now);
+  json += ",\"charge\":" + String(charge, 12);
+  json += ",\"adcRaw\":" + String(adcRaw);
+  json += ",\"voltage\":" + String(voltage, 6);
+  json += ",\"route\":" + String(currentRoute);
+  json += "}";
+  server.send(200, "application/json", json);
+}
+
 void handleRoot() {
-  String html =
-    "<html><head><title>EDA Monitor</title>"
-    "<style>body{font-family:sans-serif;margin:20px}"
-    "pre{background:#000;color:#0f0;padding:8px;height:300px;"
-    "overflow-y:scroll;font-family:monospace;}"
-    "</style>"
-    "<script>"
-    "function upd(){fetch('/log').then(r=>r.text()).then(t=>{"
-    "let p=document.getElementById('log'); p.textContent=t;"
-    "});}setInterval(upd,1000);window.onload=upd;"
-    "</script></head><body>"
-    "<h2>Electrostatic Dust Analyzer Status</h2>"
-    "<p><b>Active Route:</b> " + String(currentRoute) + "</p>"
-    "<p><b>ADC Raw:</b> " + String(adcRaw) + "</p>"
-    "<p><b>Voltage:</b> " + String(voltage, 4) + " V</p>"
-    "<h3>Serial Monitor</h3><pre id='log'></pre>"
-    "</body></html>";
+  String html = R"rawliteral(
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <title>EDA Monitor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body { font-family: sans-serif; background: #fff; padding: 20px; color: #000; }
+      canvas { background: #fff; border: 1px solid #ccc; margin-top: 20px; display: block; }
+      pre {
+        background: #fff;
+        color: #06f;
+        padding: 8px;
+        height: 250px;
+        overflow-y: scroll;
+        font-family: monospace;
+        border: 1px solid #ccc;
+      }
+      .label { font-size: 14px; margin-top: 10px; }
+      .status p { margin: 4px 0; }
+    </style>
+  </head>
+  <body>
+    <h2>Electrostatic Dust Analyzer Status</h2>
+    <div class="status">
+      <p><b>Active Route:</b> <span id="route">...</span></p>
+      <p><b>ADC Raw:</b> <span id="adc">...</span></p>
+      <p><b>Voltage:</b> <span id="volt">...</span> V</p>
+      <p><b>Charge:</b> <span id="charge">...</span> pC</p>
+    </div>
+
+    <h3>Serial Monitor</h3>
+    <pre id="log">Loading...</pre>
+
+    <h3>Charge Plot (log scale from 1fC–100pC)</h3>
+    <canvas id="chart" width="600" height="300"></canvas>
+    <div class="label"><b>X-axis:</b> Time (s) &nbsp;&nbsp; <b>Y-axis:</b> Scaled Charge (log10 × 1fC–100pC)</div>
+
+    <script>
+      const canvas = document.getElementById("chart");
+      const ctx = canvas.getContext("2d");
+      let data = [];
+      let maxPoints = 100;
+      let startTime = null;
+
+      function fetchData() {
+        fetch("/data").then(res => res.json()).then(d => {
+          if (startTime === null) startTime = d.time;
+          let t = (d.time - startTime) / 1000.0;
+          let pC = d.charge * 1e12;
+          let logY = Math.log10(Math.max(pC * 1e3, 1e-3));
+
+          data.push({ x: t, y: logY });
+          if (data.length > maxPoints) data.shift();
+
+          document.getElementById("route").textContent = d.route;
+          document.getElementById("adc").textContent = d.adcRaw;
+          document.getElementById("volt").textContent = d.voltage.toFixed(4);
+          document.getElementById("charge").textContent = d.toFixed(4);
+
+          draw();
+        });
+
+        fetch("/log").then(r => r.text()).then(t => {
+          document.getElementById("log").textContent = t;
+        });
+      }
+
+      function draw() {
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        // Grid
+        ctx.strokeStyle = "#ddd";
+        for (let i = 0; i <= 5; i++) {
+          let y = i * (h - 40) / 5;
+          ctx.beginPath();
+          ctx.moveTo(40, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        }
+        for (let i = 0; i <= 10; i++) {
+          let x = 40 + (i * (w - 50) / 10);
+          ctx.beginPath();
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, h);
+          ctx.stroke();
+        }
+
+        ctx.strokeStyle = "#999";
+        ctx.beginPath();
+        ctx.moveTo(40, 0); ctx.lineTo(40, h);
+        ctx.moveTo(0, h - 30); ctx.lineTo(w, h - 30);
+        ctx.stroke();
+
+        ctx.fillStyle = "#000";
+        ctx.font = "12px sans-serif";
+        ctx.fillText("log(Charge)", 5, 15);
+        ctx.fillText("Time (s)", w - 60, h - 10);
+
+        if (data.length < 2) return;
+
+        let ymin = -3.5;
+        let ymax = 2.5;
+
+        ctx.beginPath();
+        for (let i = 0; i < data.length; i++) {
+          let x = 40 + (i / maxPoints) * (w - 50);
+          let y = ((ymax - data[i].y) / (ymax - ymin)) * (h - 40);
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = "#06f";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      setInterval(fetchData, 1000);
+    </script>
+  </body>
+  </html>
+  )rawliteral";
+
   server.send(200, "text/html", html);
 }
 
 void setup() {
   Serial.begin(115200);
+  startTime = millis();
 
   pinMode(ROUTE1_PIN, OUTPUT);
   pinMode(ROUTE2_PIN, OUTPUT);
   pinMode(ROUTE3_PIN, OUTPUT);
-  disableAllRoutes();
-  enableRoute(1);
+  disableAllRoutes(); enableRoute(1);
 
   pinMode(CS_PIN, OUTPUT);
   digitalWrite(CS_PIN, HIGH);
@@ -101,53 +211,46 @@ void setup() {
   configureADC();
 
   WiFi.begin(ssid, password);
-  Serial.print("Connecting to WiFi");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500); Serial.print(".");
-  }
-  Serial.println("\nWiFi connected, IP address: " + WiFi.localIP().toString());
-  addLogLine("WiFi connected: " + WiFi.localIP().toString());
+  while (WiFi.status() != WL_CONNECTED) delay(500);
 
   server.on("/", handleRoot);
   server.on("/log", handleLog);
+  server.on("/data", handleData);
   server.begin();
-  Serial.println("Web server started");
-  addLogLine("Web server started");
 }
 
 void loop() {
   server.handleClient();
 
-  // Read ADC every 1 second
   if (millis() - lastADCRead >= 1000) {
     adcRaw = readMAX1032();
     voltage = ((adcRaw / 16383.0) - 0.5) * (3 * V_REF);
+    charge = calculateCharge(voltage, currentRoute);
 
-    // === Dynamic Route Switching Based on adcRaw ===
-    int newRoute = 1; // default
-    if (adcRaw >= R3_MIN && adcRaw <= R3_MAX) {
-      newRoute = 3;
-    } else if ((adcRaw >= R2_MIN_1 && adcRaw <= R2_MAX_1) || (adcRaw >= R2_MIN_2 && adcRaw <= R2_MAX_2)) {
-      newRoute = 2;
-    }
+    int newRoute = 1;
+    if (adcRaw >= R3_MIN && adcRaw <= R3_MAX) newRoute = 3;
+    else if ((adcRaw >= R2_MIN_1 && adcRaw <= R2_MAX_1) || (adcRaw >= R2_MIN_2 && adcRaw <= R2_MAX_2)) newRoute = 2;
 
     if (newRoute != currentRoute) {
       currentRoute = newRoute;
-      disableAllRoutes();
-      enableRoute(currentRoute);
-      String msg = "Auto-switched to ROUTE " + String(currentRoute) + " for ADC: " + String(adcRaw);
-      Serial.println(msg);
-      addLogLine(msg);
+      disableAllRoutes(); enableRoute(currentRoute);
     }
 
-    String adcMsg = "ADC Raw: " + String(adcRaw) +
-                    " | Voltage: " + String(voltage, 4) +
-                    " V | Active Route: " + String(currentRoute);
-    Serial.println(adcMsg);
-    addLogLine(adcMsg);
-
+    String msg = "ADC Raw: " + String(adcRaw) +
+                 " | Voltage: " + String(voltage, 4) + " V" +
+                 " | Charge: " + String(charge * 1e12, 4) + " pC" +
+                 " | Route: " + String(currentRoute);
+    Serial.println(msg);
+    addLogLine(msg);
     lastADCRead = millis();
   }
+}
+
+float calculateCharge(float voltage, int route) {
+  int R_gain = 39000;
+  if (route == 2) R_gain = 150000;
+  else if (route == 3) R_gain = 470000;
+  return C_FEEDBACK * (10000.0 / R_gain) * voltage;
 }
 
 void enableRoute(int route) {
@@ -167,7 +270,6 @@ void configureADC() {
   SPI.transfer(MODE_CONTROL_BYTE);
   digitalWrite(CS_PIN, HIGH);
   delayMicroseconds(10);
-
   digitalWrite(CS_PIN, LOW);
   SPI.transfer(ADC_RANGE_BYTE);
   digitalWrite(CS_PIN, HIGH);
@@ -175,7 +277,7 @@ void configureADC() {
 }
 
 uint16_t readMAX1032() {
-  uint8_t response[3] = {0};
+  uint8_t response[3];
   digitalWrite(CS_PIN, LOW);
   SPI.transfer(MODE_CONTROL_BYTE);
   response[0] = SPI.transfer(0x00);
