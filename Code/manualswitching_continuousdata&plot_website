@@ -53,7 +53,7 @@ bool testMode = false;  // <-- Disable test mode for physical testing
 bool clippingWarning = false;
 
 // === Serial Log ===
-constexpr uint16_t LOG_DEPTH = 120;
+constexpr uint16_t LOG_DEPTH = 500;
 String logBuf[LOG_DEPTH];
 uint16_t logHead = 0;
 
@@ -205,6 +205,11 @@ page += "white-space:normal;}";
 
   server.send(200, "text/html", page);
 }
+
+
+
+
+
 
 
 void handleDetails() {
