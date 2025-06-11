@@ -16,29 +16,37 @@ This repository contains code and resources for the **Electrostatic Dust Analyze
 
 ### Key Features
 
-1. Real-Time Detection of Charged Particles
-Detects volcanic ash, mineral dust, and wildfire smoke using induced charge measurements.
+1. **Real-Time Detection of Charged Particles**
 
-2. Electrostatic Sensing Technology
-Uses a Faraday tube and wire electrodes to sense small electrical currents from passing particles.
+    Detects volcanic ash, mineral dust, and wildfire smoke using induced charge measurements.
 
-3. Wireless Data Transmission
-The QT PY ESP32 Development Board transmits measurements via Wi-Fi to a web interface for real-time monitoring.
+2. **Electrostatic Sensing Technology**
 
-4. Onboard Signal Processing
-Calculates induced charge and estimates particle size based on charge density assumptions.
+    Uses a Faraday tube and wire electrodes to sense small electrical currents from passing particles.
 
-5. Multi-Stage Gain Amplifier
-Manually switchable gain stages (3.9×, 15×, 47×) allow for a wide range of signal amplitudes.
+3. **Wireless Data Transmission**
 
-6. Web Interface for Visualization
-Displays live data including voltage, charge, gain level, and particle size.
+    The QT PY ESP32 Development Board transmits measurements via Wi-Fi to a web interface for real-time monitoring.
 
-7. Compact, Low-Power Design
-Operates on a 9V battery at ~1.35 W, suitable for eventual aircraft integration.
+4. **Onboard Signal Processing**
 
-8. Lab-Tested with Real Volcanic Ash
-Validated through controlled experiments using Mt. St. Helens ash samples.
+    Calculates induced charge and estimates particle size based on charge density assumptions.
+
+5. **Multi-Stage Gain Amplifier**
+
+    Manually switchable gain stages (3.9×, 15×, 47×) allow for a wide range of signal amplitudes.
+
+6. **Web Interface for Visualization**
+
+    Displays live data including voltage, charge, gain level, and particle size.
+
+7. **Compact, Low-Power Design**
+
+    Operates on a 9V battery at ~1.35 W, suitable for eventual aircraft integration.
+
+8. **Lab-Tested with Real Volcanic Ash**
+
+    Validated through controlled experiments using Mt. St. Helens ash samples.
 
 ---
 
