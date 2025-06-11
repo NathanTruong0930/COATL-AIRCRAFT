@@ -462,3 +462,139 @@ Week 8 Dates: 05/19/2025 - 05/25/2025
         - N/A
     - Team Member 4 - Annika Boyd
         - N/A
+
+# COATL-AIRCRAFT Week 9 Progress Report
+Week 9 Dates: 05/26/2025 - 06/01/2025
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - This week, we were able to put our circuit together and test it with the faraday tube using electrically charged objects
+        - Still waiting on volcanic ash for final testing
+        - The PCB enclosure was delivered, modifications were made to fit the in our PCB and battery supply
+        - Our final report rough draft, dev manual, and user manual was created and turned in 
+        - The WiFi connection with the QT PY board works
+        - The web interface was completed and is able to accept data measured from the QT PY
+    - Team Member 1 - Felix Moss
+        - Github Updates (2)
+        - Report work (10)
+        - PCB Enclosure Work (8)
+        - Testing PCB (4)
+        - Meeting (12)
+    - Team Member 2 - Eisa Alsharifi
+        - Testing PCB (6)
+        - Coding (12)
+        - Report Work (3)
+        - Meeting (12)
+    - Team Member 3 - Nathan Truong
+        - Testing PCB (6)
+        - Circuit debugging (2)
+        - PCB Enclosure Work (4)
+        - Meeting (12)
+    - Team Member 4 - Annika Boyd
+        - Website Design (5)
+        - Testing PCB (6)
+        - Coding (12)
+        - Meeting (12)
+- ## Next Week
+    - Team Plan
+        - Test the circuit with volcanic ash particles
+        - Modify the PCB enclosure for proper fitting
+        - Complete our poster for presentation at the poster session
+        - Continue to fine tune our code for optimal testing
+    - Team Member 1 - Felix Moss
+        - Github updates (2)
+        - PCB Enclosure updates (5)
+        - Volcanic ash testing (4)
+        - Poster work (8)
+        - Meeting (12)
+    - Team Member 2 - Eisa Alsharifi
+        - Coding (12)
+        - Volcanic ash testing (4)
+        - Poster work (8)
+        - Meeting (12) 
+    - Team Member 3 - Nathan Truong
+        - Volcanic ash testing (4)
+        - PCB Enclosure updates (5)
+        - Meeting (12)
+    - Team Member 4 - Annika
+        - Coding (5)
+        - Volcanic ash testing (4)
+        - Poster work (8)
+        - Meeting (12)
+-  ## Blocked
+    - Team Blocks
+        - Waiting on the volcanic ash for testing
+    - Team Member 1 - Felix Moss
+        - N/A
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - N/A
+
+
+# COATL-AIRCRAFT Week 10 Progress Report
+Week 10 Dates: 06/02/2025 - 06/08/2025
+
+
+- ## Last Week (Times in Hours)
+    - Team Review
+        - Our circuit now works as intended for measuring volcanic ash
+        - Tests using volcanic ash were conducted and were successful
+        - The wifi functionality for data gathering, measurement, and observation works well
+        - Our poster has been completed, but some minor changes need to be made
+        - The PCB enclosure has been modified to fit all of our circuit's components
+    - Team Member 1 - Felix Moss
+        - Github Updates (2)
+        - Poster work (10)
+        - Testing (6)
+        - PCB Enclosure modifications (5)
+        - Meeting (12)
+    - Team Member 2 - Eisa Alsharifi
+        - Testing (6)
+        - Coding (8)
+        - Poster work (10)
+        - Meeting (12)
+    - Team Member 3 - Nathan Truong
+        - Testing (6)
+        - PCB Enclosure modifications (5)
+        - Meeting (12)
+    - Team Member 4 - Annika Boyd
+        - Coding (8)
+        - Testing (6)
+        - Poster work (10)
+        - Meeting (12)
+- ## Next Week
+    - Team Plan
+        - Add last minute graphs to the report
+        - Practice for the capstone session
+        - Finalize our final report
+        - Clean up github and add any missing documentation
+    - Team Member 1 - Felix Moss
+        - Github updates (2)
+        - Capstone presentation practice (4)
+        - Meeting (4)
+    - Team Member 2 - Eisa Alsharifi
+        - Capstone presentation practice (4)
+        - Fix poster error (4)
+        - Meeting (4) 
+    - Team Member 3 - Nathan Truong
+        - Capstone presentation practice (4)
+        - Meeting (4)
+    - Team Member 4 - Annika
+        - Capstone presentation practice (4)
+        - Fix poster error (4)
+        - Meeting (4)
+-  ## Blocked
+    - Team Blocks
+        - N/A
+    - Team Member 1 - Felix Moss
+        - N/A
+    - Team Member 2 - Eisa Alsharifi
+        - N/A
+    - Team Member 3 - Nathan Truong
+        - N/A
+    - Team Member 4 - Annika Boyd
+        - N/A        
