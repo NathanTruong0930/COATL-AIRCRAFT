@@ -1,127 +1,373 @@
 #include <SPI.h>
+#include <WiFi.h>
+#include <WebServer.h>
 
-// ADC SPI pin configuration for ESP32 Feather S3
-#define CS_PIN         16
-#define SPI_SCK        36
-#define SPI_MOSI       35
-#define SPI_MISO       37
+// === WiFi ===
+const char* ssid = "Etherium";
+const char* password = "ladylink";
+WebServer server(80);
 
-// ADG212 gain switch pins
-#define GAIN_X4_PIN    5
-#define GAIN_X15_PIN   6
-#define GAIN_X47_PIN   10
+// === Pins ===
+#define GAIN1_PIN 18
+#define GAIN2_PIN 17
+#define GAIN3_PIN 9
+#define CS_PIN     8
+#define SPI_SCK    36
+#define SPI_MOSI   35
+#define SPI_MISO   37
 
-// ADC parameters
-#define V_REF          4.098  // Use same reference voltage as in working code
-#define ADC_RANGE_BYTE 0b10000110
+// === Constants ===
+#define V_REF       4.098
+#define MAX_ADC     16383
+#define FEEDBACK_CAP 1e-10
+#define GAIN_1_MULTIPLIER 3.9
+#define GAIN_2_MULTIPLIER 15.0
+#define GAIN_3_MULTIPLIER 47.0
+#define ADC_RANGE_BYTE    0b10000100
 #define MODE_CONTROL_BYTE 0b10000000
 
-// Voltage thresholds
-#define NEG_X4_MIN_V     5.5
-#define NEG_X15_MIN_V    4.8
-#define NEG_X47_MIN_V    4.5
+// Thresholds in gain 1 terms
+#define R3_MIN 7738
+#define R3_MAX 8645
+#define R2_MIN_NEG 6770
+#define R2_MAX_NEG 7737
+#define R2_MIN_POS 8646
+#define R2_MAX_POS 9613
+#define GAIN2_TO_GAIN3_MIN 6447
+#define GAIN2_TO_GAIN3_MAX 9936
 
-#define POS_X4_MAX_V     3.5
-#define POS_X15_MAX_V    4.2
-#define POS_X47_MAX_V    4.499
+// === Sampling Control ===
+unsigned long lastSampleTime = 0;
+const unsigned long sampleInterval = 100;  // in milliseconds (adjust as needed)
 
-int currentGain = 4;
-float prevVoltage = 0.0;
+/// === Globals ===
+bool manualGain = true;  // Force manual gain for physical testing
+int activeGain = 1;
+uint16_t adcRaw = 0;
+float voltage = 0.0, charge = 0.0;
+String gainLabel = "Gain 1 (3.9x)";
+String chargeStr = "";
+String chargeSign = "";
+float testVoltage = 4.5;
+bool testMode = false;  // <-- Disable test mode for physical testing
+bool clippingWarning = false;
 
-void setup() {
-  Serial.begin(115200);
-  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
-  SPI.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
+// === Serial Log ===
+constexpr uint16_t LOG_DEPTH = 500;
+String logBuf[LOG_DEPTH];
+uint16_t logHead = 0;
 
-  pinMode(CS_PIN, OUTPUT);
-  digitalWrite(CS_PIN, HIGH);
-
-  pinMode(GAIN_X4_PIN, OUTPUT);
-  pinMode(GAIN_X15_PIN, OUTPUT);
-  pinMode(GAIN_X47_PIN, OUTPUT);
-
-  setGain(4);  // Start with gain x4 by default
-  configureADC();
-
-  delay(200);
-  Serial.println("ADC + Dynamic Gain Switching Initialized (Feather S3).");
+void addLogLine(const String& ln) {
+  logBuf[logHead] = ln;
+  logHead = (logHead + 1) % LOG_DEPTH;
 }
 
-void loop() {
-  uint16_t adcRaw = readMAX1032();
-  float measuredVoltage = (adcRaw / 16383.0) * (3 * V_REF);
-  float actualVoltage = convertToActualVoltage(measuredVoltage, currentGain);
-
-  bool isNegativeDirection = (actualVoltage < prevVoltage);
-  prevVoltage = actualVoltage;
-
-  directionBasedGainSwitch(actualVoltage, isNegativeDirection);
-
-  Serial.print("ADC Raw: "); Serial.print(adcRaw);
-  Serial.print(" | Measured Voltage: "); Serial.print(measuredVoltage, 4);
-  Serial.print(" V | Actual Voltage: "); Serial.print(actualVoltage, 4);
-  Serial.print(" V | Gain: x"); Serial.print(currentGain);
-  Serial.print(" | Direction: "); Serial.println(isNegativeDirection ? "Negative" : "Positive");
-
-  delay(1000);
+void handleLog() {
+  String out;
+  for (uint16_t i = 0; i < LOG_DEPTH; ++i) {
+    uint16_t idx = (logHead + i) % LOG_DEPTH;
+    if (logBuf[idx].length()) out += logBuf[idx] + "\n";
+  }
+  server.send(200, "text/plain", out);
 }
 
-// Match your verified ADC configuration
+void setGain(int g) {
+  digitalWrite(GAIN1_PIN, LOW);
+  digitalWrite(GAIN2_PIN, LOW);
+  digitalWrite(GAIN3_PIN, LOW);
+  delayMicroseconds(1);
+  if (g == 1) digitalWrite(GAIN1_PIN, HIGH);
+  else if (g == 2) digitalWrite(GAIN2_PIN, HIGH);
+  else if (g == 3) digitalWrite(GAIN3_PIN, HIGH);
+  activeGain = g;
+  gainLabel = (g == 1) ? "Gain 1 (3.9x)" : (g == 2) ? "Gain 2 (15x)" : "Gain 3 (47x)";
+}
+
 void configureADC() {
   digitalWrite(CS_PIN, LOW);
-  SPI.transfer(MODE_CONTROL_BYTE);  // Send Mode-Control byte
+  SPI.transfer(MODE_CONTROL_BYTE);
   digitalWrite(CS_PIN, HIGH);
   delayMicroseconds(10);
-
   digitalWrite(CS_PIN, LOW);
-  SPI.transfer(ADC_RANGE_BYTE);     // Send Analog-Input Config byte
+  SPI.transfer(ADC_RANGE_BYTE);
   digitalWrite(CS_PIN, HIGH);
   delayMicroseconds(100);
 }
 
-// Updated read function based on working code
 uint16_t readMAX1032() {
-  uint8_t b1, b2, b3;
-
+  uint8_t r[3] = {0};
+  SPI.beginTransaction(SPISettings(500000, MSBFIRST, SPI_MODE0));
   digitalWrite(CS_PIN, LOW);
-  SPI.transfer(MODE_CONTROL_BYTE);   // Start conversion
-  b1 = SPI.transfer(0x00);           // dummy
-  b2 = SPI.transfer(0x00);           // MSB
-  b3 = SPI.transfer(0x00);           // LSB
+  SPI.transfer(MODE_CONTROL_BYTE);
+  r[0] = SPI.transfer(0x00);
+  r[1] = SPI.transfer(0x00);
+  r[2] = SPI.transfer(0x00);
   digitalWrite(CS_PIN, HIGH);
-
-  uint16_t result = (((b2 << 8) | b3) >> 2) & 0x3FFF;
-  return result;
+  SPI.endTransaction();
+  return (((r[1] << 8) | r[2]) >> 2) & 0x3FFF;
 }
 
-// Gain control using ADG212 pins
-void setGain(int gain) {
-  currentGain = gain;
-  digitalWrite(GAIN_X4_PIN, gain == 4 ? HIGH : LOW);
-  digitalWrite(GAIN_X15_PIN, gain == 15 ? HIGH : LOW);
-  digitalWrite(GAIN_X47_PIN, gain == 47 ? HIGH : LOW);
-  Serial.print("Gain switched to x"); Serial.println(gain);
-}
-
-// Convert measured ADC voltage to real input voltage based on gain
-float convertToActualVoltage(float measuredVoltage, int gain) {
-  switch (gain) {
-    case 4:  return measuredVoltage;
-    case 15: return measuredVoltage / 0.2667;
-    case 47: return measuredVoltage / 0.0851;
-    default: return measuredVoltage;
+void calculateDerivedValues() {
+  // === Step 1: Reset to Gain 1 unless in manual mode
+  if (!manualGain) {
+    setGain(1);
+    delayMicroseconds(1);
   }
+
+  // === Step 2: Read initial ADC value
+  adcRaw = readMAX1032();
+
+  // === Step 5: Calculate voltage and charge
+  float voltageGain = ((adcRaw / 16383.0) - 0.5) * (3 * V_REF);
+  float gainFactor = (activeGain == 1) ? GAIN_1_MULTIPLIER :
+                     (activeGain == 2) ? GAIN_2_MULTIPLIER : GAIN_3_MULTIPLIER;
+  charge = (voltageGain / gainFactor) * FEEDBACK_CAP;
+  chargeSign = (voltageGain >= 0) ? "+" : "-";
+
+  float absCharge = abs(charge);
+  chargeStr = (absCharge >= 1e-12)
+    ? chargeSign + String(absCharge * 1e12, 4) + " pC"
+    : chargeSign + String(absCharge * 1e15, 4) + " fC";
+
+  voltage = voltageGain;
+  clippingWarning = (voltage > 4.75);
+
+  // === Step 6: Log output
+  String log = "ADC Bits: " + String(adcRaw) +
+               " | Voltage: " + String(voltage, 4) + " V" +
+               " | Charge: " + chargeStr +
+               " | Gain: " + gainLabel;
+  Serial.println(log);
+  addLogLine(log);
+
+  // === Step 7: Reset to Gain 1 for next cycle (auto mode only)
+  if (!manualGain) setGain(1);
 }
 
-// Dynamic gain switching (based on direction & thresholds)
-void directionBasedGainSwitch(float voltage, bool negativeDirection) {
-  if (negativeDirection) {
-    if (voltage >= NEG_X4_MIN_V && currentGain != 4) setGain(4);
-    else if (voltage < NEG_X4_MIN_V && voltage >= NEG_X15_MIN_V && currentGain != 15) setGain(15);
-    else if (voltage < NEG_X15_MIN_V && voltage >= NEG_X47_MIN_V && currentGain != 47) setGain(47);
-  } else {
-    if (voltage <= POS_X4_MAX_V && currentGain != 4) setGain(4);
-    else if (voltage > POS_X4_MAX_V && voltage <= POS_X15_MAX_V && currentGain != 15) setGain(15);
-    else if (voltage > POS_X15_MAX_V && voltage <= POS_X47_MAX_V && currentGain != 47) setGain(47);
+
+
+// === Particle Estimates ===
+String particleEstimate(float q, String t) {
+  float minS, maxS;
+  if (t == "Volcanic Ash") { minS = 1e-6; maxS = 1e-5; }
+  else if (t == "Wildfire Smoke") { minS = 1e-8; maxS = 1e-6; }
+  else if (t == "Mineral Dust") { minS = 7.7e-7; maxS = 2.34e-6; }
+  else return "";
+
+  float dMin = 2 * sqrt(abs(q) / (4 * PI * maxS));
+  float dMax = 2 * sqrt(abs(q) / (4 * PI * minS));
+  return String(t) + ": " + String(dMin * 1e6, 2) + "-" + String(dMax * 1e6, 2) + " &micro;m";
+}
+
+void handleMain() {
+  calculateDerivedValues();
+  String page = "<!DOCTYPE html><html><head><title>Dust Analyzer</title>";
+  page += "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+  page += "<style>";
+
+  // Body layout
+  page += "body{margin:0;padding:0;font-family:monospace;background:#A1A6A8;";
+  page += "display:flex;justify-content:center;align-items:center;height:100vh;}";
+
+  // Background image wrapper
+  page += ".bg-wrapper{position:relative;width:90vw;max-width:1400px;aspect-ratio:768/877;";
+  page += "background-image:url('https://github.com/NathanTruong0930/COATL-AIRCRAFT/blob/main/Code/Volcano2.png?raw=true');";
+  page += "background-repeat:no-repeat;background-size:contain;background-position:center;";
+  page += "display:flex;align-items:center;justify-content:center;font-size:0;}";
+
+  // Transparent overlay box with transparent border
+  page += ".overlay-text{position:absolute;top:54%;left:50%;transform:translateX(-50%);";
+  page += "width:35%;padding:1em 1.5em;background-color:transparent;";
+page += "border:2px solid transparent;text-align:center;font-size:1.2vw;line-height:1.5;";
+page += "font-family:monospace;color:black;box-sizing:border-box;border-radius:4px;";
+page += "white-space:normal;}";
+
+  // Heading and text
+  page += ".overlay-text h1{font-size:1.4em;margin:0 0 0.5em -0.3em;}";
+  page += ".overlay-text p{font-size:1em;margin:0.6em 0;}";
+
+  // Button (monospace, moved up slightly)
+  page += ".overlay-text button{font-family:monospace;font-size:1em;padding:0.4em 1.2em;";
+  page += "background:#E87749;color:black;border:none;cursor:pointer;margin-top:0.4em;";
+  page += "border-radius:6px;box-shadow:inset 0 0 0 1px #cc5e32;}";
+
+  page += "</style></head><body>";
+  page += "<div class='bg-wrapper'>";
+  page += "<div class='overlay-text'>";
+  page += "<h1>Electrostatic Dust Analyzer</h1>";
+  page += "<p><b>Charge:</b> " + chargeStr + "</p>";
+  page += "<p><b>Particle Size Estimates:</b></p>";
+  page += "<p>" + particleEstimate(charge, "Volcanic Ash") + "</p>";
+  page += "<p>" + particleEstimate(charge, "Wildfire Smoke") + "</p>";
+  page += "<p>" + particleEstimate(charge, "Mineral Dust") + "</p>";
+  page += "<form action='/details'><button>Technical Details</button></form>";
+  page += "</div></div></body></html>";
+
+  server.send(200, "text/html", page);
+}
+
+
+
+
+
+
+
+void handleDetails() {
+  calculateDerivedValues();
+  String page = "<html><head><meta charset='UTF-8'><title>Details</title>";
+  page += "<meta name='viewport' content='width=device-width, initial-scale=1.0'>";
+  page += "<style>body{background:#A1A6A8;color:black;font-family:monospace;padding:20px;}button{background:#E87749;color:black;font-family:monospace;padding:10px;border:none;cursor:pointer;}";
+  page += ".radio-group{display:flex;gap:10px;margin-top:10px;}input[type=radio]{display:none;}label{padding:6px 12px;border:1px solid black;border-radius:5px;cursor:pointer;}input[type=radio]:checked+label{background:#E87749;color:black;}</style>";
+  page += "<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>";
+page += "<script>";
+page += "let chargeData = [];";
+page += "let chargeLabels = [];";
+page += "let chart;";
+page += "function parseCharge(line) {";
+page += "  const match = line.match(/Charge:\\s+([+-]?[0-9.]+)\\s+(pC|fC)/i);";
+page += "  if (!match) return null;";
+page += "  let value = parseFloat(match[1]);";
+page += "  if (match[2] === 'fC') value /= 1000.0;";
+page += "  return value;";
+page += "}";
+page += "function initChart() {";
+page += "  const ctx = document.getElementById('chargePlot').getContext('2d');";
+page += "  chart = new Chart(ctx, {";
+page += "    type: 'line',";
+page += "    data: { labels: chargeLabels, datasets: [{";
+page += "      label: 'Charge (pC)',";
+page += "      data: chargeData,";
+page += "      borderColor: '#E87749',";
+page += "      backgroundColor: 'rgba(0,0,0,0)',";
+page += "      tension: 0.2";
+page += "    }] },";
+page += "    options: {";
+page += "      responsive: true,";
+page += "      animation: false,";
+page += "      scales: {";
+page += "        x: { display: true, title: { display: true, text: 'Sample' } },";
+page += "        y: { display: true, title: { display: true, text: 'Charge (pC)' }, beginAtZero: false }";
+page += "      }";
+page += "    }";
+page += "  });";
+page += "}";
+page += "function upd() {";
+page += "  fetch('/log').then(r => r.text()).then(t => {";
+page += "    const lines = t.trim().split('\\n');";
+page += "    const latest = lines.slice(-1)[0];";
+page += "    const chargeVal = parseCharge(latest);";
+page += "    if (chargeVal !== null) {";
+page += "      if (chargeData.length > 500) { chargeData.shift(); chargeLabels.shift(); }";
+page += "      chargeData.push(chargeVal);";
+page += "      chargeLabels.push('');";
+page += "      chart.update();";
+page += "    }";
+page += "    let p = document.getElementById('log');";
+page += "    p.textContent = t;";
+page += "    p.scrollTop = p.scrollHeight;";
+page += "  });";
+page += "}";
+page += "function applyGain() {";
+page += "  const selected = document.querySelector('input[name=\"gain\"]:checked');";
+page += "  if (selected) {";
+page += "    const gain = selected.value;";
+page += "    fetch('/selectGain', {";
+page += "      method: 'POST',";
+page += "      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },";
+page += "      body: 'gain=' + gain";
+page += "    });";
+page += "  }";
+page += "}";
+page += "window.onload = () => { initChart(); upd(); setInterval(upd, 1000); };";
+page += "</script>";
+  page += "<a href='/' style='text-decoration:none;color:black;font-weight:bold;font-size:18px;'>&#8592; Main Page</a>";
+  page += "<h2>Technical Details</h2><p><b>Charge:</b> " + chargeStr + "</p>";
+  page += "<p><b>Voltage:</b> " + String(voltage, 4) + " V</p>";
+  page += "<p><b>ADC Bits:</b> " + String(adcRaw) + "</p>";
+  page += "<p><b>Gain Stage:</b> " + gainLabel + "</p>";
+  if (clippingWarning) page += "<p style='color:red'><b>⚠️ Clipping risk!</b></p>";
+  page += "<form method='POST' action='/toggleGain'><button>Toggle " + String(manualGain ? "Auto" : "Manual") + " Gain</button></form>";
+
+  if (manualGain) {
+  page += "<div class='radio-group'>";
+  for (int g = 1; g <= 3; g++) {
+    String val = "gain" + String(g);
+    String checked = (activeGain == g) ? "checked" : "";
+    String label = (g == 1) ? "Gain 1 (3.9x)" : (g == 2) ? "Gain 2 (15x)" : "Gain 3 (47x)";
+    page += "<input type='radio' id='" + val + "' name='gain' value='" + String(g) + "' " + checked + ">";
+    page += "<label for='" + val + "'>" + label + "</label>";
+  }
+  page += "</div>";
+  page += "<button onclick='applyGain()'>Apply Gain</button>";
+}
+
+
+
+page += "<h3>Serial Monitor</h3><pre id='log' style='background:#000;color:#0f0;padding:8px;height:300px;overflow-y:scroll;font-family:monospace;'></pre>";
+
+page += "<h3>Live Charge Plot</h3>";
+page += "<canvas id='chargePlot' style='width:100%;max-width:600px;height:300px;background:white;'></canvas>";
+
+page += "</body></html>";
+server.send(200, "text/html", page);
+
+}
+
+void handleToggleGain() {
+  manualGain = !manualGain;
+  if (!manualGain) setGain(1);
+  server.sendHeader("Location", "/details");
+  server.send(303);
+}
+
+void handleSelectGain() {
+  if (server.hasArg("gain")) {
+    int g = server.arg("gain").toInt();
+    if (g >= 1 && g <= 3) setGain(g);
+  }
+  server.sendHeader("Location", "/details");
+  server.send(303);
+}
+
+void handleSummary() {
+  calculateDerivedValues();  
+  String summary = 
+    "<p><b>Charge:</b> " + chargeStr + "</p>" +
+    "<p><b>Particle Size Estimates:</b></p>" +
+    "<p>" + particleEstimate(charge, "Volcanic Ash") + "</p>" +
+    "<p>" + particleEstimate(charge, "Wildfire Smoke") + "</p>" +
+    "<p>" + particleEstimate(charge, "Mineral Dust") + "</p>";
+  server.send(200, "text/html", summary);
+}
+
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(CS_PIN, OUTPUT); digitalWrite(CS_PIN, HIGH);
+  pinMode(GAIN1_PIN, OUTPUT); pinMode(GAIN2_PIN, OUTPUT); pinMode(GAIN3_PIN, OUTPUT);
+  setGain(1);
+  SPI.begin(SPI_SCK, SPI_MISO, SPI_MOSI);
+  configureADC();
+
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) { delay(500); Serial.print("."); }
+  Serial.println("\nWiFi connected. IP: " + WiFi.localIP().toString());
+
+  server.on("/", handleMain);
+  server.on("/summary", handleSummary);
+  server.on("/details", handleDetails);
+  server.on("/log", handleLog);
+  server.on("/toggleGain", HTTP_POST, handleToggleGain);
+  server.on("/selectGain", HTTP_POST, handleSelectGain);
+  server.begin();
+}
+
+void loop() {
+  server.handleClient();
+
+  unsigned long now = millis();
+  if (now - lastSampleTime >= sampleInterval) {
+    calculateDerivedValues();  // New reading from ADC
+    lastSampleTime = now;
   }
 }
