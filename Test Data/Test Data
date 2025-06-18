@@ -1,0 +1,9 @@
+Shown in the Test Data folder are some oscilloscope images. 
+
+As of June 13th -poster session date, our digitally taken data is being interferred with by the digital signal sending the data. So there is not digitally taken data listed here. All data we do have from that time is when our box was not grounded/the box was acting as an antenna instead of insulation.
+There are a few periodic lines in our oscilloscope plots when wifi is off, check current sampling and sending rate in code when you test. They seem to match that rate (generally), I think getting that external antenna would be ideal going forward.
+The microcontoller is unhappy it can't communicate, so we see those periodic lines that do not appear when wifi is connected (since it can actually communicate and we see the flat tops instead).
+The short flat tops seen in the oscillosope (mainly the gnd_wifion images) show the digital signal when no particles are going through the circuit while the lid is as closed as it can be (except for the portion opened to get the wire measuring out).
+All data in here as of 6/17/1025, is taken with the box grounded through copper tape. (Maybe get a more secure connection? Tape is not a long term solution lol... probably)
+
+Older oscilloscopes do not show the wifi off periodic lines.
